@@ -5,7 +5,7 @@ from scapy.all import *
 import pandas as pd
 import matplotlib.pyplot as plt
 from io import BytesIO
-from main_script import (
+from network_main import (
     read_pcap, extract_packet_data, analyze_packet_data,
     extract_packet_data_security, detect_port_scanning
 )
