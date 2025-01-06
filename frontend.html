@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCAP Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">PCAP Analyzer</h1>
+        <form id="upload-form">
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload PCAP File:</label>
+                <input type="file" class="form-control" id="file" name="file" required>
+            </div>
+            <div class="mb-3">
+                <label for="port_scan_threshold" class="form-label">Port Scan Threshold:</label>
+                <input type="number" class="form-control" id="port_scan_threshold" name="port_scan_threshold" value="100">
+            </div>
+            <button type="submit" class="btn btn-primary">Analyze</button>
+        </form>
+        <div id="results" class="mt-5"></div>
+    </div>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('results').innerHTML = `
+                        <h3>Analysis Results:</h3>
+                        <p>Total Bandwidth: ${result.total_bandwidth}</p>
+                        <pre>${JSON.stringify(result.protocol_counts, null, 2)}</pre>
+                        <pre>${JSON.stringify(result.ip_communication_table, null, 2)}</pre>
+                    `;
+                } else {
+                    document.getElementById('results').innerHTML = `<p>Error: ${result.error}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = `<p>Something went wrong.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
